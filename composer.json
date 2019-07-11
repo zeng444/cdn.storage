@@ -1,0 +1,13 @@
+{
+  "name": "janfish/storage",
+  "authors": [
+    {
+      "name": "Robert Zeng",
+      "email": "zeng444@163.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "php": ">=7.0.0"
+  }
+}
