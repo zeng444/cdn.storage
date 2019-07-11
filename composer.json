@@ -1,5 +1,6 @@
 {
   "name": "janfish/storage",
+  "description": "Client of distributed file storage service",
   "authors": [
     {
       "name": "Robert Zeng",
