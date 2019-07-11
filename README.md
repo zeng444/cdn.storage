@@ -56,7 +56,7 @@ appSecret: test123456
 
 #### 单文件上传
 
-```
+```php
 $result = $cloudStorage->setFile($_FILES[0]['tmp_name'])->upload();
 if ($result === false) {
     return $app->apiResponse->error($cloudStorage->getError());
@@ -79,7 +79,7 @@ $images = $cloudStorage->getResult();
 
 #### 指定tag上传
 
-```
+```php
 $result = $cloudStorage->setFile($_FILES[0]['tmp_name'])->setTag('test')->upload();
 if ($result === false) {
     return $app->apiResponse->error($cloudStorage->getError());
@@ -88,7 +88,8 @@ $images = $cloudStorage->getResult();
 ```
 
 #### 批量上传
-```
+
+```php
 $cloudStorage = $app->cloudStorage;
 $files = array_column($_FILES, 'tmp_name');
 $cloudStorage->setFiles($files);
@@ -119,7 +120,7 @@ $images = $cloudStorage->getResult();
 
 本地约束限制设置（服务端针对appid也有限制，权限应该在服务端的限制之下）
 
-```
+```php
 $result = $app->cloudStorage->setAllowed([
      'image/jpeg',
      'image/jpg',
