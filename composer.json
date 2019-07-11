@@ -6,6 +6,7 @@
       "email": "zeng444@163.com"
     }
   ],
+  "license": "MIT",
   "minimum-stability": "dev",
   "require": {
     "php": ">=7.0.0"
