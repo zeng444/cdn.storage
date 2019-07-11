@@ -19,7 +19,7 @@ composer require janfish/storage 1.0
 
 ```php
 $di->set('cloudStorage', function () use ($config) {
-    return new Janfish\Storage([
+    return new Janfish\Storage\Client([
         'api' => 'http://disk.xy.cn/',
         'imagePrefix' => 'http://cdn.xy.cn/',
         'tag' => 'insurance',
