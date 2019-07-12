@@ -233,12 +233,12 @@ class Client
     }
 
     /**
-     * Author:Robert
+     * Author:Robert Tsang
      *
      * @return bool
      * @throws Exception
      */
-    public function upload(): bool
+    public function checkFiles(): bool
     {
         foreach ($this->files as &$file) {
             if (!$file || !file_exists($file['file'])) {
@@ -253,11 +253,27 @@ class Client
                 return false;
             }
         }
+        return true;
+    }
+
+    /**
+     * Author:Robert
+     *
+     * @return bool
+     * @throws Exception
+     */
+    public function upload(): bool
+    {
+        if ($this->checkFiles() === false) {
+            $this->files = [];
+            return false;
+        }
         $res = json_decode($this->http($this->getApiUrl(), 'POST', [
             'time' => time(),
             'tag' => $this->tag,
             'pathType' => $this->pathType,
         ], $this->files), true);
+        $this->files = [];
         if (!$res) {
             throw new Exception('数据的格式返回返回', 500);
         }
