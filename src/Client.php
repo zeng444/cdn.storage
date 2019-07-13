@@ -37,6 +37,13 @@ class Client
     protected $appId = '';
 
     /**
+     * Author:Robert Tsang
+     *
+     * @var mixed|string
+     */
+    protected $version = 'default';
+
+    /**
      * Author:Robert
      *
      * @var bool|mixed
@@ -127,6 +134,9 @@ class Client
     {
         if (isset($options['api'])) {
             $this->api = $options['api'];
+        }
+        if (isset($options['version'])) {
+            $this->version = $options['version'];
         }
         if (isset($options['imagePrefix'])) {
             $this->imagePrefix = $options['imagePrefix'];
@@ -405,6 +415,7 @@ class Client
         curl_setopt($curl, CURLOPT_HEADER, 0);
         curl_setopt($curl, CURLOPT_HTTPHEADER, [
             $this->makeBasicToken(),
+            'version: '.$this->version,
         ]);
         if (in_array($method, ['POST', 'PUT'])) {
             curl_setopt($curl, CURLOPT_POST, 1);

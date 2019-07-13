@@ -2,24 +2,17 @@
 
 ## 背景
 
-图片存储作为基础服务，独立于各个应用外，通过远程调用发送图片到存储服务中。存储服务通过GridFs集中管理文件的创建，复制，删除以及CDN服务
-
+- 图片存储作为基础服务，独立于各个应用外，通过远程调用发送图片到存储服务中。存储服务集中管理文件的创建，复制，删除以及CDN服务 
 
 ## 客户端程序
-
-### 安装
-
-```bash
-composer require janfish/storage 1.0 
-```
-
 
 ### 注入phalcon
 
 
 ```php
 $di->set('cloudStorage', function () use ($config) {
-    return new Janfish\Storage\Client([
+    return new CloudStorage([
+        'version' => 'GridFs',
         'api' => 'http://disk.xy.cn/',
         'imagePrefix' => 'http://cdn.xy.cn/',
         'tag' => 'insurance',
@@ -34,6 +27,7 @@ $di->set('cloudStorage', function () use ($config) {
 
 | 参数       |  类型   |默认值 | 说明       |
 |------------|--------|--------|--------------|
+|version     | string | default| 版本，GridFs和default分别使用两种存储方式，不填写默认为default  |
 |api         | string |        | 服务地址http  |
 |appId       | string |        | 访问凭证ID   |
 |appSecret   | string |        | 访问凭密码   |
@@ -56,7 +50,7 @@ appSecret: test123456
 
 #### 单文件上传
 
-```php
+```
 $result = $cloudStorage->setFile($_FILES[0]['tmp_name'])->upload();
 if ($result === false) {
     return $app->apiResponse->error($cloudStorage->getError());
@@ -71,6 +65,7 @@ $images = $cloudStorage->getResult();
 [
     {
         "status": "200",
+        "oid": "5d29f7b04e110f00085fbab2",
         "path": "insurance/201928/2332727541.jpeg",
         "url": "http://cdn.xy.cn/insurance/201928/2332727541.jpeg"
     }
@@ -79,7 +74,7 @@ $images = $cloudStorage->getResult();
 
 #### 指定tag上传
 
-```php
+```
 $result = $cloudStorage->setFile($_FILES[0]['tmp_name'])->setTag('test')->upload();
 if ($result === false) {
     return $app->apiResponse->error($cloudStorage->getError());
@@ -88,8 +83,7 @@ $images = $cloudStorage->getResult();
 ```
 
 #### 批量上传
-
-```php
+```
 $cloudStorage = $app->cloudStorage;
 $files = array_column($_FILES, 'tmp_name');
 $cloudStorage->setFiles($files);
@@ -107,11 +101,13 @@ $images = $cloudStorage->getResult();
 [
     {
         "status": "200",
+        "oid": "5d29f7b04e110f00085fbab2",
         "path": "insurance/201928/2332727541.jpeg",
         "url": "http://cdn.xy.cn/insurance/201928/2332727541.jpeg"
     },
     {
         "status": "200",
+        "oid": "5d29f7b04e110f00085fbab2",
         "path": "insurance/201928/106785628.jpeg",
         "url": "http://cdn.xy.cn/insurance/201928/106785628.jpeg"
     }
@@ -120,7 +116,7 @@ $images = $cloudStorage->getResult();
 
 本地约束限制设置（服务端针对appid也有限制，权限应该在服务端的限制之下）
 
-```php
+```
 $result = $app->cloudStorage->setAllowed([
      'image/jpeg',
      'image/jpg',
