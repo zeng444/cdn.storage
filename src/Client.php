@@ -165,7 +165,7 @@ class Client
         if (!$this->api) {
             throw new Exception('对不起，请先配置文件存储服务');
         }
-        if (!preg_match('/^\w+$/', $this->tag)) {
+        if (!preg_match('/^[\w\.]+$/', $this->tag)) {
             throw new Exception('对不起tag格式不合法');
         }
     }
