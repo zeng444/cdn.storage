@@ -333,12 +333,27 @@ class Client
      * Author:Robert
      *
      * @param string $file
-     * @param array $opt
+     * @param array $opts
      * @return string
      */
-    public function getStaticUrl(string $file = '', $opt = []): string
+    public function getStaticUrl(string $file = '', $opts = []): string
     {
-        return $this->imagePrefix.'/'.$file;
+        $url = $this->imagePrefix.$file;
+        if (!$opts) {
+            return $url;
+        }
+        $query = '?imageView2/';
+        if (!isset($opts['mode'])) {
+            $opts['mode'] = 1;
+        }
+        $query .= $opts['mode'].'/';
+        if (isset($opts['width'])) {
+            $query .= 'w/'.$opts['width'].'/';
+        }
+        if (isset($opts['height'])) {
+            $query .= 'h/'.$opts['height'].'/';
+        }
+        return $url.$query;
     }
 
     /**
@@ -410,10 +425,11 @@ class Client
     {
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 2);
-        curl_setopt($curl, CURLOPT_TIMEOUT, 5);
+        curl_setopt($curl, CURLOPT_TIMEOUT, 60);
         curl_setopt($curl, CURLOPT_USERAGENT, "X.Y R&D Apollo Program");
         curl_setopt($curl, CURLOPT_HEADER, 0);
         curl_setopt($curl, CURLOPT_HTTPHEADER, [
+            'Expect:',
             $this->makeBasicToken(),
             'version: '.$this->version,
         ]);
@@ -421,7 +437,6 @@ class Client
             curl_setopt($curl, CURLOPT_POST, 1);
         }
         if (in_array($method, ['POST']) && $files) {
-            curl_setopt($curl, CURLOPT_SAFE_UPLOAD, 1);
             foreach ($files as $index => $file) {
                 $fields["file$index"] = curl_file_create($file['file'], ($file['mime']));
             }
@@ -446,6 +461,7 @@ class Client
             throw new Exception(curl_error($curl), 0);
         }
         $httpStatusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
         if (200 !== $httpStatusCode) {
             throw new Exception($res, $httpStatusCode);
         }

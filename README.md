@@ -11,7 +11,7 @@
 
 ```php
 $di->set('cloudStorage', function () use ($config) {
-    return new CloudStorage([
+    return new \Janfish\Storage\Client([
         'version' => 'GridFs',
         'api' => 'http://disk.xy.cn/',
         'imagePrefix' => 'http://cdn.xy.cn/',
@@ -55,7 +55,7 @@ $result = $cloudStorage->setFile($_FILES[0]['tmp_name'])->upload();
 if ($result === false) {
     return $app->apiResponse->error($cloudStorage->getError());
 }
-$images = $cloudStorage->getResult();
+print_r($cloudStorage->getResult());
 ```
 
 返回的数据
@@ -79,7 +79,7 @@ $result = $cloudStorage->setFile($_FILES[0]['tmp_name'])->setTag('test')->upload
 if ($result === false) {
     return $app->apiResponse->error($cloudStorage->getError());
 }
-$images = $cloudStorage->getResult();
+print_r($cloudStorage->getResult());
 ```
 
 #### 批量上传
@@ -91,7 +91,7 @@ $cloudStorage->setTag('insurance');
 if ($cloudStorage->upload() === false) {
     echo $cloudStorage->getError();
 }
-$images = $cloudStorage->getResult();
+print_r($cloudStorage->getResult());
 ```
 
 返回的数据
@@ -140,7 +140,6 @@ $cloudStorage = $app->cloudStorage;
 if ($cloudStorage->remove(['insurance/201928/106785628.jpeg','insurance/201928/2332727541.jpeg']) === false) {
     echo  $cloudStorage->getError();
 }
-    
 ```
 
 
@@ -164,7 +163,10 @@ http://cdn.xy.cn/insurance/201928/2332727541.jpeg
 #### 图片在线裁剪（需要CDN支持）
 
 ```php
-echo $app->cloudStorage->getStaticUrl('insurance/201928/2332727541.jpeg',['width'=>100,'height'=>100,clipType='1']);
+echo $app->cloudStorage->getStaticUrl('insurance/201928/2332727541.jpeg',['mode'=>1,'width'=>100,'height'=>100]);
 ```
 
+- mode 1、等比例裁剪 2、非等比裁剪，默认1
+- width 裁剪到的宽度
+- height 裁剪到的高度
 

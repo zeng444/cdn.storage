@@ -10,6 +10,7 @@
   "license": "MIT",
   "minimum-stability": "dev",
   "require": {
+    "ext-curl": "*",
     "php": ">=7.0.0"
   },
   "autoload": {
