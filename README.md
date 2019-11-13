@@ -63,7 +63,7 @@ $images = $cloudStorage->getResult();
 > 服务端会先使用文件后缀，如果文件没有后缀，可以通过setFile的第二参数指定后缀，如果也无，服务器会尝试使用上传文件的MIME信息判断可能的对应文件后缀
 
 ```
-$result = $cloudStorage->setFile($_FILES[0]['tmp_name'],'jpg)->upload();
+$result = $cloudStorage->setFile($_FILES[0]['tmp_name'],'.jpg)->upload();
 if ($result === false) {
     return $app->apiResponse->error($cloudStorage->getError());
 }
