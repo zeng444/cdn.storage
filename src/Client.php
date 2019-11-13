@@ -210,16 +210,18 @@ class Client
      * Author:Robert
      *
      * @param string $file
+     * @param string $ext
      * @return $this
      * @throws Exception
      */
-    public function setFile(string $file)
+    public function setFile(string $file, string $ext = '')
     {
         if (!$file || !file_exists($file)) {
             throw new Exception('文件路径不存在，请检查'.$file, 500);
         }
         $this->files[] = [
             'file' => $file,
+            'ext' => $ext,
             'size' => filesize($file),
             'mime' => mime_content_type($file),
         ];
@@ -237,7 +239,7 @@ class Client
     {
         $files = is_array($files) ? $files : [$files];
         foreach ($files as $file) {
-            $this->setFile($file);
+            $this->setFile($file, '');
         }
         return $this;
     }
@@ -425,7 +427,7 @@ class Client
     {
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 2);
-        curl_setopt($curl, CURLOPT_TIMEOUT, 60);
+        curl_setopt($curl, CURLOPT_TIMEOUT, 35);
         curl_setopt($curl, CURLOPT_USERAGENT, "X.Y R&D Apollo Program");
         curl_setopt($curl, CURLOPT_HEADER, 0);
         curl_setopt($curl, CURLOPT_HTTPHEADER, [
@@ -438,7 +440,7 @@ class Client
         }
         if (in_array($method, ['POST']) && $files) {
             foreach ($files as $index => $file) {
-                $fields["file$index"] = curl_file_create($file['file'], ($file['mime']));
+                $fields["file$index"] = curl_file_create($file['file'], ($file['mime']), $file['ext'] ?: null);
             }
         }
         if ($fields) {

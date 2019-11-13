@@ -11,7 +11,7 @@
 
 ```php
 $di->set('cloudStorage', function () use ($config) {
-    return new \Janfish\Storage\Client([
+    return new CloudStorage([
         'version' => 'GridFs',
         'api' => 'http://disk.xy.cn/',
         'imagePrefix' => 'http://cdn.xy.cn/',
@@ -55,7 +55,19 @@ $result = $cloudStorage->setFile($_FILES[0]['tmp_name'])->upload();
 if ($result === false) {
     return $app->apiResponse->error($cloudStorage->getError());
 }
-print_r($cloudStorage->getResult());
+$images = $cloudStorage->getResult();
+```
+
+#### 指定文件后缀
+
+> 服务端会先使用文件后缀，如果文件没有后缀，可以通过setFile的第二参数指定后缀，如果也无，服务器会尝试使用上传文件的MIME信息判断可能的对应文件后缀
+
+```
+$result = $cloudStorage->setFile($_FILES[0]['tmp_name'],'jpg)->upload();
+if ($result === false) {
+    return $app->apiResponse->error($cloudStorage->getError());
+}
+$images = $cloudStorage->getResult();
 ```
 
 返回的数据
@@ -79,10 +91,13 @@ $result = $cloudStorage->setFile($_FILES[0]['tmp_name'])->setTag('test')->upload
 if ($result === false) {
     return $app->apiResponse->error($cloudStorage->getError());
 }
-print_r($cloudStorage->getResult());
+$images = $cloudStorage->getResult();
 ```
 
 #### 批量上传
+
+> 这里无法指定文件后缀，所以设置的上传文件最好本身带有后缀
+
 ```
 $cloudStorage = $app->cloudStorage;
 $files = array_column($_FILES, 'tmp_name');
@@ -91,7 +106,7 @@ $cloudStorage->setTag('insurance');
 if ($cloudStorage->upload() === false) {
     echo $cloudStorage->getError();
 }
-print_r($cloudStorage->getResult());
+$images = $cloudStorage->getResult();
 ```
 
 返回的数据
@@ -163,10 +178,7 @@ http://cdn.xy.cn/insurance/201928/2332727541.jpeg
 #### 图片在线裁剪（需要CDN支持）
 
 ```php
-echo $app->cloudStorage->getStaticUrl('insurance/201928/2332727541.jpeg',['mode'=>1,'width'=>100,'height'=>100]);
+echo $app->cloudStorage->getStaticUrl('insurance/201928/2332727541.jpeg',['width'=>100,'height'=>100,clipType='1']);
 ```
 
-- mode 1、等比例裁剪 2、非等比裁剪，默认1
-- width 裁剪到的宽度
-- height 裁剪到的高度
 
